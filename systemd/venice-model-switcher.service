@@ -1,0 +1,9 @@
+[Unit]
+Description=OpenClaw Venice model switcher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/openclaw-venice-model-switcher
+ExecStart=/usr/bin/python3 %h/openclaw-venice-model-switcher/venice-model-switcher.py
