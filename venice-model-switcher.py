@@ -29,6 +29,9 @@ MODELS = {
     "grok420": "venice/grok-4-20-beta",
     "gemini": "venice/gemini-3-flash-preview",
     "grok41fast": "venice/grok-41-fast",
+    "exhausted": os.environ.get(
+        "VENICE_SWITCH_EXHAUSTED_MODEL", "ollama/qwen3.5:397b-cloud"
+    ),
 }
 
 MODEL_TIERS = [
@@ -36,6 +39,7 @@ MODEL_TIERS = [
     (35, "grok420"),
     (65, "gemini"),
     (90, "grok41fast"),
+    (100, "exhausted"),
 ]
 
 
@@ -346,7 +350,8 @@ def session_target_model(
     if not is_venice_session(session):
         return None
 
-    return MODELS[tier_key]
+    target = MODELS[tier_key]
+    return target
 
 
 def select_session_patches(
@@ -368,9 +373,15 @@ def select_session_patches(
             continue
 
         current_model = normalize_model_name(session)
-        normalized_current = current_model.removeprefix("venice/")
-        normalized_target = target_model.removeprefix("venice/")
-        if normalized_current == normalized_target:
+        if current_model == target_model:
+            continue
+        # Also compare without provider prefix for Venice models.
+        if (
+            current_model.startswith("venice/")
+            and target_model.startswith("venice/")
+            and current_model.removeprefix("venice/")
+            == target_model.removeprefix("venice/")
+        ):
             continue
 
         patches.append((key, current_model or "(unset)", target_model))

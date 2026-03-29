@@ -18,6 +18,9 @@ The default thresholds live in `venice-model-switcher.py`:
 - `35%+` -> `venice/grok-4-20-beta`
 - `65%+` -> `venice/gemini-3-flash-preview`
 - `90%+` -> `venice/grok-41-fast`
+- `100%` -> `ollama/qwen3.5:397b-cloud` (configurable via `VENICE_SWITCH_EXHAUSTED_MODEL`)
+
+When DIEM is fully exhausted (100%), the switcher moves to a non-Venice provider so the agent can still respond. The default exhausted model is `ollama/qwen3.5:397b-cloud` (Ollama Cloud). Set `VENICE_SWITCH_EXHAUSTED_MODEL` to use a different fallback provider/model.
 
 Edit `MODELS` and `MODEL_TIERS` if you want different tradeoffs.
 
@@ -109,6 +112,7 @@ By default the state file is stored at `~/.openclaw/diem-switch-state.json` and 
 - `VENICE_SWITCH_PINNED_SESSIONS`: optional comma-separated session pins like `session-key=grok-41-fast`.
 - `VENICE_SWITCH_LOG_FILE`: optional path to the switcher log file.
 - `VENICE_SWITCH_STATE_FILE`: optional path to the switcher state file.
+- `VENICE_SWITCH_EXHAUSTED_MODEL`: optional model to use when DIEM is fully exhausted (default: `ollama/qwen3.5:397b-cloud`).
 
 By default both scripts look for a `.env` file next to the script itself.
 
